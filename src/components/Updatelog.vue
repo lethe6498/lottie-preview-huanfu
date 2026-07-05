@@ -7,32 +7,6 @@
     </div>
 
     <div class="timeline-container">
-      <!-- 统计数据卡片 -->
-      <div v-if="Object.keys(usageStats).length > 0" class="timeline-item usage-stats-item">
-        <div class="version-meta">
-          <div class="version-number">📊</div>
-          <div class="version-date">使用统计</div>
-        </div>
-        <div class="timeline-axis">
-          <div class="dot current-dot">
-            <div class="dot-inner"></div>
-          </div>
-          <div class="line"></div>
-        </div>
-        <div class="content-card stats-card">
-          <div class="stats-header">
-            <span class="stats-title">🚀 运行数据统计 (自 2026-03-24 起)</span>
-            <span class="total-badge">累计使用: {{ totalUsage }} 次</span>
-          </div>
-          <div class="stats-grid">
-            <div v-for="(count, date) in usageStats" :key="date" class="stats-item">
-              <div class="stats-date">{{ date }}</div>
-              <div class="stats-count">{{ count }} <span class="unit">次</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div v-for="(log, index) in logs" :key="index" class="timeline-item">
         <!-- 左侧：版本信息 -->
         <div class="version-meta">
@@ -63,54 +37,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-
-const usageStats = ref({})
-const totalUsage = computed(() => {
-  return Object.values(usageStats.value).reduce((sum, count) => sum + count, 0)
-})
-
-onMounted(async () => {
-  try {
-    // 1. 先尝试获取远程服务器统计数据 (全局)
-    const response = await fetch('http://101.200.38.189:3000/api/stats')
-    if (response.ok) {
-      const globalStats = await response.json()
-      usageStats.value = globalStats
-      return
-    }
-  } catch (e) {
-    console.error('远程统计加载失败，回退至本地存储:', e)
-  }
-
-  // 2. 降级逻辑：如果远程失败，则读取本地存储
-  try {
-    const rawStats = JSON.parse(localStorage.getItem('lottie_tool_daily_usage') || '{}')
-    const formattedStats = {}
-    const todayStr = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })
-    const startDate = new Date('2026-03-24')
-
-    if (!rawStats[todayStr]) {
-      formattedStats[todayStr] = 0
-    }
-
-    Object.keys(rawStats)
-      .sort((a, b) => new Date(b) - new Date(a))
-      .forEach((dateStr) => {
-        const date = new Date(dateStr)
-        if (date >= startDate || dateStr === todayStr) {
-          formattedStats[dateStr] = rawStats[dateStr].total || 0
-        }
-      })
-
-    usageStats.value = formattedStats
-  } catch (e) {
-    console.error('本地统计数据加载失败:', e)
-  }
-})
+import { ref } from 'vue'
 
 const logs = ref([
   // --- 在这里添加新的版本 ---
+  {
+    version: 'v1.7.1',
+    date: '2026-07-05',
+    items: ['🏠 新增首页跳转挂件：在页面右下角添加悬浮返回首页按钮，方便快速回到工具首页'],
+  },
   {
     version: 'v1.7.0',
     date: '2026-03-24',
@@ -382,76 +317,6 @@ const logs = ref([
 .log-list li::before {
   content: ''; /* 移除列表圆点，因为文本中包含 emoji */
   display: none;
-}
-
-/* 统计数据样式 */
-.stats-card {
-  background: linear-gradient(135deg, #f0f9eb 0%, #ffffff 100%) !important;
-  border: 1px solid #e1f3d8 !important;
-  margin-bottom: 30px;
-}
-
-.stats-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed #e1f3d8;
-}
-
-.stats-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #67c23a;
-}
-
-.total-badge {
-  background-color: #67c23a;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 15px;
-}
-
-.stats-item {
-  background: white;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ebeef5;
-  text-align: center;
-  transition: transform 0.2s;
-}
-
-.stats-item:hover {
-  transform: scale(1.05);
-  border-color: #67c23a;
-}
-
-.stats-date {
-  font-size: 12px;
-  color: #909399;
-  margin-bottom: 6px;
-}
-
-.stats-count {
-  font-size: 20px;
-  font-weight: bold;
-  color: #1f2d3d;
-}
-
-.unit {
-  font-size: 12px;
-  font-weight: normal;
-  color: #909399;
-  margin-left: 2px;
 }
 
 @media (max-width: 768px) {

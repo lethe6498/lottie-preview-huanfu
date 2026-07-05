@@ -51,6 +51,18 @@
       />
     </div>
   </div>
+  <div class="floating-buttons">
+    <a href="/" title="返回首页" class="home-widget">
+      <span class="home-widget-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="1" width="5" height="5" rx="1.5" fill="white" />
+          <rect x="8" y="1" width="5" height="5" rx="1.5" fill="white" fill-opacity="0.6" />
+          <rect x="1" y="8" width="5" height="5" rx="1.5" fill="white" fill-opacity="0.6" />
+          <rect x="8" y="8" width="5" height="5" rx="1.5" fill="white" />
+        </svg>
+      </span>
+    </a>
+  </div>
 </template>
 
 <script>
@@ -500,6 +512,44 @@ h1 {
   display: flex;
   gap: 30px;
   align-items: flex-start;
+}
+
+.floating-buttons {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-widget {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: #3370ff;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.15s ease;
+}
+
+.home-widget:hover {
+  transform: scale(1.1);
+}
+
+.home-widget-icon {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #3370ff;
 }
 
 @media (max-width: 1024px) {
